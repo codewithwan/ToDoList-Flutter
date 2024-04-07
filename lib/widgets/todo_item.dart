@@ -40,7 +40,10 @@ class ToDoItem extends StatelessWidget {
                 decoration: todo.isDone ? TextDecoration.lineThrough : null,
                 decorationColor: Colors.white),
           ),
-          subtitle: Text("helo", style: TextStyle(color: Colors.white38),),
+          subtitle: Text(
+            "helo",
+            style: TextStyle(color: Colors.white38),
+          ),
           trailing: Container(
             padding: const EdgeInsets.all(0),
             margin: const EdgeInsets.symmetric(vertical: 12),

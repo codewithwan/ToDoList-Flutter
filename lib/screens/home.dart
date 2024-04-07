@@ -11,7 +11,14 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final todosList = ToDo.todoList();
+  List<ToDo> _foundToDo = [];
   final _todoController = TextEditingController();
+
+  @override
+  void initState() {
+    _foundToDo = todosList;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +56,7 @@ class _HomeState extends State<Home> {
                           ],
                         ),
                       ),
-                      for (ToDo todoo in todosList)
+                      for (ToDo todoo in _foundToDo.reversed)
                         ToDoItem(
                           todo: todoo,
                           onToDoChanged: _handleToDoChange,
@@ -127,11 +134,29 @@ class _HomeState extends State<Home> {
         ));
   }
 
+  void _runFilter(String enteredKeyword) {
+    List<ToDo> results = [];
+    if (enteredKeyword.isEmpty) {
+      results = todosList;
+    } else {
+      results = todosList
+          .where((item) => item.todoText!
+              .toLowerCase()
+              .contains(enteredKeyword.toLowerCase()))
+          .toList();
+    }
+
+
+    setState(() {
+      _foundToDo = results;
+    });
+  }
+
   void _addToDoItem(String toDo) {
     setState(() {
-      todosList.add(ToDo (
-        id : DateTime.now().millisecondsSinceEpoch.toString(),
-        todoText : toDo, 
+      todosList.add(ToDo(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        todoText: toDo,
       ));
     });
     _todoController.clear();
@@ -174,20 +199,13 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-}
-
-class searchBox extends StatelessWidget {
-  const searchBox({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget searchBox() {
     return Container(
       decoration: BoxDecoration(
           color: Color.fromARGB(255, 32, 32, 32),
           borderRadius: BorderRadius.circular(20)),
       child: TextField(
+        onChanged: (value) => _runFilter(value),
         cursorColor: Colors.amberAccent,
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
         decoration: InputDecoration(
@@ -206,3 +224,4 @@ class searchBox extends StatelessWidget {
     );
   }
 }
+
