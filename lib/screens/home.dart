@@ -14,6 +14,7 @@ class _HomeState extends State<Home> {
   final todosList = ToDo.todoList();
   List<ToDo> _foundToDo = [];
   final _todoController = TextEditingController();
+  bool _isCalendar = true;
 
   @override
   void initState() {
@@ -49,15 +50,21 @@ class _HomeState extends State<Home> {
                                   fontWeight: FontWeight.w500),
                             ),
                             IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  setState(() {
+                                    _isCalendar = !_isCalendar;
+                                  });
+                                },
                                 icon: Icon(
-                                  Icons.date_range,
+                                  _isCalendar
+                                      ? Icons.close
+                                      : Icons.calendar_month,
                                   color: Colors.white70,
                                 ))
                           ],
                         ),
                       ),
-                      _buildCalendar(),
+                      Visibility(visible: _isCalendar, child: _buildCalendar()),
                       for (ToDo todoo in _foundToDo.reversed)
                         ToDoItem(
                           todo: todoo,
@@ -118,7 +125,9 @@ class _HomeState extends State<Home> {
                         style: TextStyle(color: Colors.black87, fontSize: 40),
                       ),
                       onPressed: () {
-                        _addToDoItem(_todoController.text);
+                        if (_todoController.text != "") {
+                          _addToDoItem(_todoController.text);
+                        } 
                       },
                     ),
                   )
@@ -133,6 +142,9 @@ class _HomeState extends State<Home> {
     return Container(
         margin: EdgeInsets.only(bottom: 10),
         child: TableCalendar(
+          focusedDay: DateTime.now(),
+          firstDay: DateTime(2020),
+          lastDay: DateTime(2030),
           weekendDays: [DateTime.sunday],
           calendarFormat: CalendarFormat.month,
           availableCalendarFormats: {CalendarFormat.month: 'Month'},
@@ -157,9 +169,6 @@ class _HomeState extends State<Home> {
                   TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
               todayTextStyle:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          focusedDay: DateTime.now(),
-          firstDay: DateTime(2020),
-          lastDay: DateTime(2030),
           onDaySelected: (selectedDay, focusedDay) {
             print(selectedDay);
           },
@@ -183,12 +192,16 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void _showCalendar(bool con) {
+    setState(() {});
+  }
+
   void _addToDoItem(String toDo) {
     setState(() {
       todosList.add(ToDo(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        todoText: toDo,
-      ));
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          todoText: toDo,
+          date: DateFormat.MMMEd().format(DateTime.now())));
     });
     _todoController.clear();
   }
@@ -196,6 +209,7 @@ class _HomeState extends State<Home> {
   void _handleToDoChange(ToDo todo) {
     setState(() {
       todo.isDone = !todo.isDone;
+      _foundToDo.reversed;
     });
   }
 
