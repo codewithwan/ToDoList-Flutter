@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 import '../model/todo.dart';
 import '../widgets/todo_item.dart';
 // import 'package:todolist/constants/color.dart';
@@ -36,7 +37,7 @@ class _HomeState extends State<Home> {
                       child: ListView(
                     children: [
                       Container(
-                        margin: EdgeInsets.only(top: 30, bottom: 20),
+                        margin: EdgeInsets.only(top: 20, bottom: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -56,12 +57,16 @@ class _HomeState extends State<Home> {
                           ],
                         ),
                       ),
+                      _buildCalendar(),
                       for (ToDo todoo in _foundToDo.reversed)
                         ToDoItem(
                           todo: todoo,
                           onToDoChanged: _handleToDoChange,
                           onDeleteItem: _deleteToDoItem,
                         ),
+                        SizedBox(
+                          height: 60,
+                        )
                     ],
                   ))
                 ],
@@ -134,6 +139,47 @@ class _HomeState extends State<Home> {
         ));
   }
 
+  Container _buildCalendar() {
+    return Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: TableCalendar(
+                          weekendDays: [DateTime.sunday],
+                          calendarFormat: CalendarFormat.month,
+                          availableCalendarFormats: {
+                            CalendarFormat.month: 'Month'
+                          },
+                          headerStyle: HeaderStyle(
+                            titleCentered: true,
+                            titleTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                            headerMargin: EdgeInsets.only(bottom: 10),
+                            decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(20)),
+                          ),
+                          daysOfWeekStyle: DaysOfWeekStyle(
+                              weekdayStyle: TextStyle(color: Colors.white),
+                              weekendStyle:
+                                  TextStyle(color: Color.fromARGB(255, 252, 99, 88))),
+                          calendarStyle: CalendarStyle(
+                            todayDecoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(18)),
+                              weekendTextStyle: TextStyle(
+                                  color: Color.fromARGB(179, 252, 99, 88),
+                                  fontWeight: FontWeight.bold),
+                              defaultTextStyle: TextStyle(
+                                  color: Colors.white70,
+                                  fontWeight: FontWeight.bold),
+                              todayTextStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold)),
+                          focusedDay: DateTime.now(),
+                          firstDay: DateTime(2020),
+                          lastDay: DateTime(2030),
+                          onDaySelected: (selectedDay, focusedDay) {
+                            print(selectedDay);
+                          },
+                        ));
+  }
+
   void _runFilter(String enteredKeyword) {
     List<ToDo> results = [];
     if (enteredKeyword.isEmpty) {
@@ -145,7 +191,6 @@ class _HomeState extends State<Home> {
               .contains(enteredKeyword.toLowerCase()))
           .toList();
     }
-
 
     setState(() {
       _foundToDo = results;
@@ -199,8 +244,10 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
   Widget searchBox() {
     return Container(
+      margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
           color: Color.fromARGB(255, 32, 32, 32),
           borderRadius: BorderRadius.circular(20)),
@@ -224,4 +271,3 @@ class _HomeState extends State<Home> {
     );
   }
 }
-

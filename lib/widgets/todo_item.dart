@@ -19,6 +19,9 @@ class ToDoItem extends StatelessWidget {
     return Container(
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: ListTile(
+          // onLongPress: () {
+              
+          // },
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           onTap: () {
