@@ -7,13 +7,12 @@ class ToDoItem extends StatelessWidget {
   final onDeleteItem;
   // final bool isCalendar;
 
-  const ToDoItem(
-      {Key? key,
-      required this.todo,
-      required this.onToDoChanged,
-      required this.onDeleteItem,
-      })
-      : super(key: key);
+  const ToDoItem({
+    Key? key,
+    required this.todo,
+    required this.onToDoChanged,
+    required this.onDeleteItem,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,17 +20,20 @@ class ToDoItem extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: ListTile(
           onLongPress: () {
-            print("object"); 
+            print("object");
           },
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           tileColor:
               todo.isDone ? Color.fromARGB(255, 16, 16, 16) : Colors.white10,
           leading: IconButton(
-            style: ButtonStyle(padding: MaterialStatePropertyAll(EdgeInsets.zero)),
-            icon:Icon( todo.isDone ? Icons.check_box : Icons.check_box_outline_blank,),
+            style:
+                ButtonStyle(padding: MaterialStatePropertyAll(EdgeInsets.zero)),
+            icon: Icon(
+              todo.isDone ? Icons.check_box : Icons.check_box_outline_blank,
+            ),
             onPressed: () {
               onToDoChanged(todo);
             },

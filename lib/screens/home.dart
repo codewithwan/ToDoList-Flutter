@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../model/todo.dart';
 import '../widgets/todo_item.dart';
-// import 'package:todolist/constants/color.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -15,11 +14,15 @@ class _HomeState extends State<Home> {
   List<ToDo> _foundToDo = [];
   final _todoController = TextEditingController();
   bool _isCalendar = true;
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
 
   @override
   void initState() {
     _foundToDo = todosList;
     super.initState();
+    _selectedDay = _focusedDay;
   }
 
   @override
@@ -127,7 +130,7 @@ class _HomeState extends State<Home> {
                       onPressed: () {
                         if (_todoController.text != "") {
                           _addToDoItem(_todoController.text);
-                        } 
+                        }
                       },
                     ),
                   )
@@ -142,12 +145,13 @@ class _HomeState extends State<Home> {
     return Container(
         margin: EdgeInsets.only(bottom: 10),
         child: TableCalendar(
-          focusedDay: DateTime.now(),
+          focusedDay: _focusedDay,
           firstDay: DateTime(2020),
           lastDay: DateTime(2030),
           weekendDays: [DateTime.sunday],
-          calendarFormat: CalendarFormat.month,
-          availableCalendarFormats: {CalendarFormat.month: 'Month'},
+          startingDayOfWeek: StartingDayOfWeek.monday,
+          calendarFormat: _calendarFormat,
+          availableCalendarFormats: {_calendarFormat: 'Month'},
           headerStyle: HeaderStyle(
             titleCentered: true,
             titleTextStyle:
@@ -160,8 +164,13 @@ class _HomeState extends State<Home> {
               weekdayStyle: TextStyle(color: Colors.white),
               weekendStyle: TextStyle(color: Color.fromARGB(255, 252, 99, 88))),
           calendarStyle: CalendarStyle(
-              todayDecoration: BoxDecoration(
-                  color: Colors.amber, borderRadius: BorderRadius.circular(18)),
+            selectedTextStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              selectedDecoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color.fromARGB(255, 255, 193, 7)),
+              outsideDaysVisible: false,
+              todayDecoration:
+                  BoxDecoration(color: Color.fromARGB(116, 255, 194, 12), shape: BoxShape.circle),
               weekendTextStyle: TextStyle(
                   color: Color.fromARGB(179, 252, 99, 88),
                   fontWeight: FontWeight.bold),
@@ -169,10 +178,33 @@ class _HomeState extends State<Home> {
                   TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
               todayTextStyle:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          onDaySelected: (selectedDay, focusedDay) {
-            print(selectedDay);
+          selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+          onDaySelected: _onDaySelected,
+          onFormatChanged: (format) {
+            if (_calendarFormat != format) {
+              setState(() {
+                _calendarFormat = format;
+              });
+            }
+          },
+          onPageChanged: (focusedDay) {
+            _focusedDay = focusedDay;
           },
         ));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    if (!isSameDay(_selectedDay, selectedDay)) {
+      setState(() {
+        _selectedDay = selectedDay;
+        _focusedDay = focusedDay;
+      });
+    }
   }
 
   void _runFilter(String enteredKeyword) {
@@ -209,7 +241,6 @@ class _HomeState extends State<Home> {
   void _handleToDoChange(ToDo todo) {
     setState(() {
       todo.isDone = !todo.isDone;
-      _foundToDo.reversed;
     });
   }
 
