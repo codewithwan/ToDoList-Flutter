@@ -64,9 +64,9 @@ class _HomeState extends State<Home> {
                           onToDoChanged: _handleToDoChange,
                           onDeleteItem: _deleteToDoItem,
                         ),
-                        SizedBox(
-                          height: 60,
-                        )
+                      SizedBox(
+                        height: 60,
+                      )
                     ],
                   ))
                 ],
@@ -102,16 +102,6 @@ class _HomeState extends State<Home> {
                     ),
                   )),
                   Container(
-                    // decoration: BoxDecoration(
-                    //   boxShadow: const [
-                    //     BoxShadow(
-                    //       color: Color.fromARGB(52, 0, 0, 0),
-                    //         offset: Offset(0.0, 0.0),
-                    //         blurRadius: 10.0,
-                    //         spreadRadius: 0.0
-                    //     )
-                    //   ]
-                    // ),
                     margin: EdgeInsets.only(top: 5, bottom: 20, right: 20),
                     // decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
                     child: ElevatedButton(
@@ -141,43 +131,39 @@ class _HomeState extends State<Home> {
 
   Container _buildCalendar() {
     return Container(
-                        margin: EdgeInsets.only(bottom: 10),
-                        child: TableCalendar(
-                          weekendDays: [DateTime.sunday],
-                          calendarFormat: CalendarFormat.month,
-                          availableCalendarFormats: {
-                            CalendarFormat.month: 'Month'
-                          },
-                          headerStyle: HeaderStyle(
-                            titleCentered: true,
-                            titleTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                            headerMargin: EdgeInsets.only(bottom: 10),
-                            decoration: BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: BorderRadius.circular(20)),
-                          ),
-                          daysOfWeekStyle: DaysOfWeekStyle(
-                              weekdayStyle: TextStyle(color: Colors.white),
-                              weekendStyle:
-                                  TextStyle(color: Color.fromARGB(255, 252, 99, 88))),
-                          calendarStyle: CalendarStyle(
-                            todayDecoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(18)),
-                              weekendTextStyle: TextStyle(
-                                  color: Color.fromARGB(179, 252, 99, 88),
-                                  fontWeight: FontWeight.bold),
-                              defaultTextStyle: TextStyle(
-                                  color: Colors.white70,
-                                  fontWeight: FontWeight.bold),
-                              todayTextStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold)),
-                          focusedDay: DateTime.now(),
-                          firstDay: DateTime(2020),
-                          lastDay: DateTime(2030),
-                          onDaySelected: (selectedDay, focusedDay) {
-                            print(selectedDay);
-                          },
-                        ));
+        margin: EdgeInsets.only(bottom: 10),
+        child: TableCalendar(
+          weekendDays: [DateTime.sunday],
+          calendarFormat: CalendarFormat.month,
+          availableCalendarFormats: {CalendarFormat.month: 'Month'},
+          headerStyle: HeaderStyle(
+            titleCentered: true,
+            titleTextStyle:
+                TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            headerMargin: EdgeInsets.only(bottom: 10),
+            decoration: BoxDecoration(
+                color: Colors.amber, borderRadius: BorderRadius.circular(20)),
+          ),
+          daysOfWeekStyle: DaysOfWeekStyle(
+              weekdayStyle: TextStyle(color: Colors.white),
+              weekendStyle: TextStyle(color: Color.fromARGB(255, 252, 99, 88))),
+          calendarStyle: CalendarStyle(
+              todayDecoration: BoxDecoration(
+                  color: Colors.amber, borderRadius: BorderRadius.circular(18)),
+              weekendTextStyle: TextStyle(
+                  color: Color.fromARGB(179, 252, 99, 88),
+                  fontWeight: FontWeight.bold),
+              defaultTextStyle:
+                  TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+              todayTextStyle:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          focusedDay: DateTime.now(),
+          firstDay: DateTime(2020),
+          lastDay: DateTime(2030),
+          onDaySelected: (selectedDay, focusedDay) {
+            print(selectedDay);
+          },
+        ));
   }
 
   void _runFilter(String enteredKeyword) {
