@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import '../model/event.dart';
 import '../model/todo.dart';
 import '../widgets/todo_item.dart';
 
@@ -13,16 +14,19 @@ class _HomeState extends State<Home> {
   final todosList = ToDo.todoList();
   List<ToDo> _foundToDo = [];
   final _todoController = TextEditingController();
-  bool _isCalendar = true;
+  bool _isCalendar = false; // default = false
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  DateTime _selectedDay = DateTime.now();
+  Map<DateTime, List<Event>> events = {};
+  late final ValueNotifier<List<Event>> _selectedEvents;
 
   @override
   void initState() {
-    _foundToDo = todosList;
     super.initState();
+    _foundToDo = todosList;
     _selectedDay = _focusedDay;
+    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay));
   }
 
   @override
@@ -68,12 +72,22 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       Visibility(visible: _isCalendar, child: _buildCalendar()),
-                      for (ToDo todoo in _foundToDo.reversed)
-                        ToDoItem(
-                          todo: todoo,
-                          onToDoChanged: _handleToDoChange,
-                          onDeleteItem: _deleteToDoItem,
-                        ),
+                      Container(
+                          child: todosList.isEmpty
+                              ? Center(
+                                heightFactor: _isCalendar? 5 : 20,
+                                  child: Text("Tugas masih kosong.", style: TextStyle(color: Colors.white70),),
+                                )
+                              : Column(
+                                  children: [
+                                    for (ToDo todoo in _foundToDo.reversed)
+                                      ToDoItem(
+                                        todo: todoo,
+                                        onToDoChanged: _handleToDoChange,
+                                        onDeleteItem: _deleteToDoItem,
+                                      ),
+                                  ],
+                                )),
                       SizedBox(
                         height: 60,
                       )
@@ -130,6 +144,9 @@ class _HomeState extends State<Home> {
                       onPressed: () {
                         if (_todoController.text != "") {
                           _addToDoItem(_todoController.text);
+                          events.addAll({
+                            _selectedDay: [Event(_todoController.text)]
+                          });
                         }
                       },
                     ),
@@ -152,6 +169,7 @@ class _HomeState extends State<Home> {
           startingDayOfWeek: StartingDayOfWeek.monday,
           calendarFormat: _calendarFormat,
           availableCalendarFormats: {_calendarFormat: 'Month'},
+          eventLoader: _getEventsForDay,
           headerStyle: HeaderStyle(
             titleCentered: true,
             titleTextStyle:
@@ -164,13 +182,15 @@ class _HomeState extends State<Home> {
               weekdayStyle: TextStyle(color: Colors.white),
               weekendStyle: TextStyle(color: Color.fromARGB(255, 252, 99, 88))),
           calendarStyle: CalendarStyle(
-            selectedTextStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              selectedTextStyle:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               selectedDecoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Color.fromARGB(255, 255, 193, 7)),
               outsideDaysVisible: false,
-              todayDecoration:
-                  BoxDecoration(color: Color.fromARGB(116, 255, 194, 12), shape: BoxShape.circle),
+              todayDecoration: BoxDecoration(
+                  color: Color.fromARGB(116, 255, 194, 12),
+                  shape: BoxShape.circle),
               weekendTextStyle: TextStyle(
                   color: Color.fromARGB(179, 252, 99, 88),
                   fontWeight: FontWeight.bold),
@@ -203,8 +223,13 @@ class _HomeState extends State<Home> {
       setState(() {
         _selectedDay = selectedDay;
         _focusedDay = focusedDay;
+        _selectedEvents.value = _getEventsForDay(selectedDay);
       });
     }
+  }
+
+  List<Event> _getEventsForDay(DateTime day) {
+    return events[day] ?? [];
   }
 
   void _runFilter(String enteredKeyword) {
@@ -224,16 +249,14 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _showCalendar(bool con) {
-    setState(() {});
-  }
-
   void _addToDoItem(String toDo) {
+    var selectDate = _selectedDay;
+    String formatter = DateFormat.MMMEd().format(selectDate).toString();
     setState(() {
       todosList.add(ToDo(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
           todoText: toDo,
-          date: DateFormat.MMMEd().format(DateTime.now())));
+          date: formatter));
     });
     _todoController.clear();
   }
