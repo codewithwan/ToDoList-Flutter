@@ -50,7 +50,7 @@ class _HomeState extends State<Home> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "All ToDos",
+                              "All Task",
                               style: TextStyle(
                                   fontSize: 25,
                                   color: Colors.white,
@@ -142,7 +142,8 @@ class _HomeState extends State<Home> {
                         style: TextStyle(color: Colors.black87, fontSize: 40),
                       ),
                       onPressed: () {
-                        if (_todoController.text != "") {
+                        print(_selectedDay);
+                        if (_todoController.text.isNotEmpty) {
                           _addToDoItem(_todoController.text);
                           events.addAll({
                             _selectedDay: [Event(_todoController.text)]
@@ -223,6 +224,10 @@ class _HomeState extends State<Home> {
       setState(() {
         _selectedDay = selectedDay;
         _focusedDay = focusedDay;
+        _selectedEvents.value = _getEventsForDay(selectedDay);
+      });
+    } else {
+      setState(() {
         _selectedEvents.value = _getEventsForDay(selectedDay);
       });
     }
