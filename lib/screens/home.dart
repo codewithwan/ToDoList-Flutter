@@ -6,6 +6,8 @@ import '../model/todo.dart';
 import '../widgets/todo_item.dart';
 
 class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
   State<Home> createState() => _HomeState();
 }
@@ -17,19 +19,23 @@ class _HomeState extends State<Home> {
   bool _isCalendar = false; // default = false
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
-  DateTime _selectedDay = DateTime.now();
+  DateTime? _selectedDay = DateTime.now();
   Map<DateTime, List<Event>> events = {};
   late final ValueNotifier<List<Event>> _selectedEvents;
+  DateTime? _isSelected;
+  late bool Function(DateTime) selectedDayPredicate;
 
   @override
+  // Initializes the state of the object. Copies the todosList to _foundToDo, sets _selectedDay to _focusedDay, and initializes _selectedEvents with events for the selected day.
   void initState() {
     super.initState();
     _foundToDo = todosList;
     _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay));
+    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
   }
 
   @override
+  // Builds the main UI scaffold of the app, including the app bar, search box, task list, calendar, and add task functionality.
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.black87,
@@ -37,7 +43,7 @@ class _HomeState extends State<Home> {
         body: Stack(
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Column(
                 children: [
                   searchBox(),
@@ -45,11 +51,11 @@ class _HomeState extends State<Home> {
                       child: ListView(
                     children: [
                       Container(
-                        margin: EdgeInsets.only(top: 20, bottom: 20),
+                        margin: const EdgeInsets.only(top: 20, bottom: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               "All Task",
                               style: TextStyle(
                                   fontSize: 25,
@@ -75,8 +81,11 @@ class _HomeState extends State<Home> {
                       Container(
                           child: todosList.isEmpty
                               ? Center(
-                                heightFactor: _isCalendar? 5 : 20,
-                                  child: Text("Tugas masih kosong.", style: TextStyle(color: Colors.white70),),
+                                  heightFactor: _isCalendar ? 5 : 20,
+                                  child: const Text(
+                                    "No tasks available.",
+                                    style: TextStyle(color: Colors.white70),
+                                  ),
                                 )
                               : Column(
                                   children: [
@@ -85,10 +94,10 @@ class _HomeState extends State<Home> {
                                         todo: todoo,
                                         onToDoChanged: _handleToDoChange,
                                         onDeleteItem: _deleteToDoItem,
-                                      ),
+                                      ) 
                                   ],
                                 )),
-                      SizedBox(
+                      const SizedBox(
                         height: 60,
                       )
                     ],
@@ -102,11 +111,11 @@ class _HomeState extends State<Home> {
                 children: [
                   Expanded(
                       child: Container(
-                    margin: EdgeInsets.only(left: 20, bottom: 12, right: 20),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    margin: const EdgeInsets.only(left: 20, bottom: 12, right: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Color.fromARGB(255, 39, 39, 39),
+                      color: const Color.fromARGB(255, 39, 39, 39),
                       boxShadow: const [
                         BoxShadow(
                             color: Color.fromARGB(52, 0, 0, 0),
@@ -117,16 +126,16 @@ class _HomeState extends State<Home> {
                     ),
                     child: TextField(
                       controller: _todoController,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                       cursorColor: Colors.amber,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           hintText: "Add New Task...",
                           hintStyle: TextStyle(color: Colors.white70),
                           border: InputBorder.none),
                     ),
                   )),
                   Container(
-                    margin: EdgeInsets.only(top: 5, bottom: 20, right: 20),
+                    margin: const EdgeInsets.only(top: 5, bottom: 20, right: 20),
                     // decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
                     child: ElevatedButton(
                       style: ButtonStyle(
@@ -137,16 +146,15 @@ class _HomeState extends State<Home> {
                                   RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(20)))),
-                      child: Text(
+                      child: const Text(
                         "+",
                         style: TextStyle(color: Colors.black87, fontSize: 40),
                       ),
                       onPressed: () {
-                        print(_selectedDay);
                         if (_todoController.text.isNotEmpty) {
                           _addToDoItem(_todoController.text);
                           events.addAll({
-                            _selectedDay: [Event(_todoController.text)]
+                            _selectedDay!: [Event(_todoController.text)]
                           });
                         }
                       },
@@ -159,14 +167,15 @@ class _HomeState extends State<Home> {
         ));
   }
 
+  // Builds and returns a Container widget containing a TableCalendar widget with specified properties and styles.
   Container _buildCalendar() {
     return Container(
-        margin: EdgeInsets.only(bottom: 10),
+        margin: const EdgeInsets.only(bottom: 10),
         child: TableCalendar(
           focusedDay: _focusedDay,
           firstDay: DateTime(2020),
           lastDay: DateTime(2030),
-          weekendDays: [DateTime.sunday],
+          weekendDays: const [DateTime.sunday],
           startingDayOfWeek: StartingDayOfWeek.monday,
           calendarFormat: _calendarFormat,
           availableCalendarFormats: {_calendarFormat: 'Month'},
@@ -174,16 +183,17 @@ class _HomeState extends State<Home> {
           headerStyle: HeaderStyle(
             titleCentered: true,
             titleTextStyle:
-                TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            headerMargin: EdgeInsets.only(bottom: 10),
+                const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            headerMargin: const EdgeInsets.only(bottom: 10),
             decoration: BoxDecoration(
                 color: Colors.amber, borderRadius: BorderRadius.circular(20)),
           ),
-          daysOfWeekStyle: DaysOfWeekStyle(
+          daysOfWeekStyle: const DaysOfWeekStyle(
               weekdayStyle: TextStyle(color: Colors.white),
               weekendStyle: TextStyle(color: Color.fromARGB(255, 252, 99, 88))),
-          calendarStyle: CalendarStyle(
-            markerDecoration: BoxDecoration(color: Colors.purpleAccent, shape: BoxShape.circle),
+          calendarStyle: const CalendarStyle(
+              markerDecoration: BoxDecoration(
+                  color: Colors.purpleAccent, shape: BoxShape.circle),
               selectedTextStyle:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               selectedDecoration: BoxDecoration(
@@ -200,7 +210,7 @@ class _HomeState extends State<Home> {
                   TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
               todayTextStyle:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+          selectedDayPredicate: (day) => isSameDay(_isSelected, day),
           onDaySelected: _onDaySelected,
           onFormatChanged: (format) {
             if (_calendarFormat != format) {
@@ -220,24 +230,41 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
+  // A function that returns a predicate function to check if a given DateTime is the same as a selected DateTime.
+  bool Function(DateTime) getSelectedDayPredicate() {
+    return (day) => isSameDay(_isSelected, day);
+  }
+
+  // Updates the state and predicate based on the selected day and focused day.
+  void _updateStateAndPredicate(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      _selectedDay = selectedDay;
+      _focusedDay = focusedDay;
+      _selectedEvents.value = _getEventsForDay(selectedDay);
+    });
+    _isSelected = selectedDay;
+    selectedDayPredicate = getSelectedDayPredicate();
+  }
+
+  // A function that handles the selection of a day. It compares the selected day with the currently selected day and updates the state and predicate accordingly. If the selected day is the same as the focused day, it resets the selected day and predicate.
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     if (!isSameDay(_selectedDay, selectedDay)) {
+      _updateStateAndPredicate(selectedDay, focusedDay);
+    } else if (selectedDay == focusedDay) {
       setState(() {
-        _selectedDay = selectedDay;
-        _focusedDay = focusedDay;
-        _selectedEvents.value = _getEventsForDay(selectedDay);
+        _selectedDay = null;
       });
-    } else {
-      setState(() {
-        _selectedEvents.value = _getEventsForDay(selectedDay);
-      });
+      _isSelected = null;
+      selectedDayPredicate = getSelectedDayPredicate();
     }
   }
 
+  // Get the events for a specific day from the events map, returns an empty list if no events are found.
   List<Event> _getEventsForDay(DateTime day) {
     return events[day] ?? [];
   }
 
+  // This function filters the todosList based on the enteredKeyword and updates the _foundToDo state.
   void _runFilter(String enteredKeyword) {
     List<ToDo> results = [];
     if (enteredKeyword.isEmpty) {
@@ -255,8 +282,9 @@ class _HomeState extends State<Home> {
     });
   }
 
+  // Add a new to-do item to the todosList with the provided toDo text and the selected date. Clears the todoController after adding the item.
   void _addToDoItem(String toDo) {
-    var selectDate = _selectedDay;
+    var selectDate = _selectedDay!;
     String formatter = DateFormat.MMMEd().format(selectDate).toString();
     setState(() {
       todosList.add(ToDo(
@@ -267,6 +295,7 @@ class _HomeState extends State<Home> {
     _todoController.clear();
   }
 
+  // Handles the change of a ToDo item, toggling its 'isDone' property.
   void _handleToDoChange(ToDo todo) {
     setState(() {
       todo.isDone = !todo.isDone;
@@ -279,9 +308,10 @@ class _HomeState extends State<Home> {
     });
   }
 
+  // Builds and returns the app bar widget with specific styling and elements.
   AppBar _buildAppBar() {
     return AppBar(
-      shape: Border(bottom: BorderSide(color: Colors.white10)),
+      shape: const Border(bottom: BorderSide(color: Colors.white10)),
       elevation: 0,
       toolbarHeight: 80,
       backgroundColor: Colors.black87,
@@ -290,12 +320,12 @@ class _HomeState extends State<Home> {
         children: [
           Text(
             DateFormat.MMMEd().format(DateTime.now()),
-            style: TextStyle(
+            style: const TextStyle(
                 fontWeight: FontWeight.w500, fontSize: 30, color: Colors.white),
           ),
           IconButton(
               onPressed: () {},
-              icon: Icon(
+              icon: const Icon(
                 Icons.more_vert,
                 color: Colors.white70,
                 size: 30,
@@ -305,17 +335,18 @@ class _HomeState extends State<Home> {
     );
   }
 
+  // Creates a search box widget with a text field for user input, which triggers a filter function when the text is changed. The search box is contained within a styled container with specified margin and decoration.
   Widget searchBox() {
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-          color: Color.fromARGB(255, 32, 32, 32),
+          color: const Color.fromARGB(255, 32, 32, 32),
           borderRadius: BorderRadius.circular(20)),
       child: TextField(
         onChanged: (value) => _runFilter(value),
         cursorColor: Colors.amberAccent,
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
-        decoration: InputDecoration(
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
+        decoration: const InputDecoration(
             hintText: "Search",
             hintStyle: TextStyle(color: Colors.white30),
             prefixIcon: Icon(
