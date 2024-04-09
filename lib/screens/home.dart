@@ -183,6 +183,7 @@ class _HomeState extends State<Home> {
               weekdayStyle: TextStyle(color: Colors.white),
               weekendStyle: TextStyle(color: Color.fromARGB(255, 252, 99, 88))),
           calendarStyle: CalendarStyle(
+            markerDecoration: BoxDecoration(color: Colors.purpleAccent, shape: BoxShape.circle),
               selectedTextStyle:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               selectedDecoration: BoxDecoration(
