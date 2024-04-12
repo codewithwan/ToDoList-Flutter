@@ -94,7 +94,7 @@ class _HomeState extends State<Home> {
                                         todo: todoo,
                                         onToDoChanged: _handleToDoChange,
                                         onDeleteItem: _deleteToDoItem,
-                                      ) 
+                                      )
                                   ],
                                 )),
                       const SizedBox(
@@ -111,8 +111,10 @@ class _HomeState extends State<Home> {
                 children: [
                   Expanded(
                       child: Container(
-                    margin: const EdgeInsets.only(left: 20, bottom: 12, right: 20),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    margin:
+                        const EdgeInsets.only(left: 20, bottom: 12, right: 20),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: const Color.fromARGB(255, 39, 39, 39),
@@ -135,7 +137,8 @@ class _HomeState extends State<Home> {
                     ),
                   )),
                   Container(
-                    margin: const EdgeInsets.only(top: 5, bottom: 20, right: 20),
+                    margin:
+                        const EdgeInsets.only(top: 5, bottom: 20, right: 20),
                     // decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
                     child: ElevatedButton(
                       style: ButtonStyle(
@@ -302,7 +305,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _deleteToDoItem(String id) {
+  void _deleteToDoItem(String date, String id) {
     setState(() {
       todosList.removeWhere((item) => item.id == id);
     });
@@ -324,7 +327,11 @@ class _HomeState extends State<Home> {
                 fontWeight: FontWeight.w500, fontSize: 30, color: Colors.white),
           ),
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                events.forEach((i, j) {
+                  print(i);
+                });
+              },
               icon: const Icon(
                 Icons.more_vert,
                 color: Colors.white70,
@@ -345,7 +352,8 @@ class _HomeState extends State<Home> {
       child: TextField(
         onChanged: (value) => _runFilter(value),
         cursorColor: Colors.amberAccent,
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
+        style:
+            const TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
         decoration: const InputDecoration(
             hintText: "Search",
             hintStyle: TextStyle(color: Colors.white30),
@@ -362,4 +370,3 @@ class _HomeState extends State<Home> {
     );
   }
 }
-

@@ -20,7 +20,7 @@ class ToDoItem extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: ListTile(
           onLongPress: () {
-            onDeleteItem(todo.id);
+            onDeleteItem(todo.todoText,todo.id);
           },
           contentPadding:
             const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
